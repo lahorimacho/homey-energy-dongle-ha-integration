@@ -1,0 +1,40 @@
+{
+  "0-0:1.0.0": {"description": "Timestamp", "unit": null, "type": "datetime"},
+  "0-0:96.1.0": {"description": "Meter ID", "unit": null, "type": "string"},
+  "0-0:96.14.0": {"description": "Tariff indicator", "unit": null, "type": "int"},
+
+  "1-0:1.8.0": {"description": "Active energy import (total)", "unit": "kWh", "type": "float"},
+  "1-0:2.8.0": {"description": "Active energy export (total)", "unit": "kWh", "type": "float"},
+  "1-0:3.8.0": {"description": "Reactive energy import (total)", "unit": "kVArh", "type": "float"},
+  "1-0:4.8.0": {"description": "Reactive energy export (total)", "unit": "kVArh", "type": "float"},
+
+  "1-0:1.7.0": {"description": "Instantaneous active power import", "unit": "kW", "type": "float"},
+  "1-0:2.7.0": {"description": "Instantaneous active power export", "unit": "kW", "type": "float"},
+  "1-0:3.7.0": {"description": "Instantaneous reactive power import", "unit": "kVAr", "type": "float"},
+  "1-0:4.7.0": {"description": "Instantaneous reactive power export", "unit": "kVAr", "type": "float"},
+
+  "1-0:21.7.0": {"description": "L1 active power import", "unit": "kW", "type": "float"},
+  "1-0:22.7.0": {"description": "L1 active power export", "unit": "kW", "type": "float"},
+  "1-0:23.7.0": {"description": "L1 reactive power import", "unit": "kVAr", "type": "float"},
+  "1-0:24.7.0": {"description": "L1 reactive power export", "unit": "kVAr", "type": "float"},
+
+  "1-0:41.7.0": {"description": "L2 active power import", "unit": "kW", "type": "float"},
+  "1-0:42.7.0": {"description": "L2 active power export", "unit": "kW", "type": "float"},
+  "1-0:43.7.0": {"description": "L2 reactive power import", "unit": "kVAr", "type": "float"},
+  "1-0:44.7.0": {"description": "L2 reactive power export", "unit": "kVAr", "type": "float"},
+
+  "1-0:61.7.0": {"description": "L3 active power import", "unit": "kW", "type": "float"},
+  "1-0:62.7.0": {"description": "L3 active power export", "unit": "kW", "type": "float"},
+  "1-0:63.7.0": {"description": "L3 reactive power import", "unit": "kVAr", "type": "float"},
+  "1-0:64.7.0": {"description": "L3 reactive power export", "unit": "kVAr", "type": "float"},
+
+  "1-0:32.7.0": {"description": "Voltage L1", "unit": "V", "type": "float"},
+  "1-0:52.7.0": {"description": "Voltage L2", "unit": "V", "type": "float"},
+  "1-0:72.7.0": {"description": "Voltage L3", "unit": "V", "type": "float"},
+
+  "1-0:31.7.0": {"description": "Current L1", "unit": "A", "type": "float"},
+  "1-0:51.7.0": {"description": "Current L2", "unit": "A", "type": "float"},
+  "1-0:71.7.0": {"description": "Current L3", "unit": "A", "type": "float"},
+
+  "0-1:24.2.1": {"description": "Gas meter reading (if present)", "unit": "m³", "type": "float"}
+}
