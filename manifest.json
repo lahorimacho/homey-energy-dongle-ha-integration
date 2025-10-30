@@ -1,12 +1,10 @@
 {
   "domain": "dsmr_homey",
-  "name": "DSMR (Homey Dongle)",
-  "version": "0.1.0",
-  "documentation": "",
-  "requirements": [
-    "dsmr-parser==1.4.3",
-    "pyserial>=3.5"
-  ],
-  "dependencies": [],
-  "codeowners": []
+  "name": "DSMR Homey",
+  "version": "0.2.0",
+  "documentation": "https://github.com/lahorimacho/homey-energy-dongle-ha-integration",
+  "requirements": ["aiohttp>=3.8"],
+  "codeowners": ["@you"],
+  "config_flow": true,
+  "iot_class": "local_push"
 }
