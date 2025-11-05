@@ -4,7 +4,7 @@
   "version": "0.2.0",
   "documentation": "https://github.com/lahorimacho/homey-energy-dongle-ha-integration",
   "requirements": ["aiohttp>=3.8"],
-  "codeowners": ["@you"],
+  "codeowners": ["@lahorimacho"],
   "config_flow": true,
   "iot_class": "local_push",
   "icon": "https://github.com/lahorimacho/homey-energy-dongle-ha-integration/blob/master/homey-energy-dongle.png",
