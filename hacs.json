@@ -1,0 +1,5 @@
+{
+    "name": "Homey DSMR",
+    "homeassistant": "2025.10.4",
+    "hacs": "2.0.5"
+}
