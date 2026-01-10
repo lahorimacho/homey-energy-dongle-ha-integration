@@ -170,23 +170,23 @@ class DSMRCoordinator(DataUpdateCoordinator):
             _LOGGER.debug("  → OBIS %s = %s %s", obis, val_str, unit)
 
             schema = self._schema.get(obis, {})
-            field = schema.get("description", obis).lower().replace(" ", "_")
-            typ = schema.get("type", "string")
+            field_desc = schema.get("description", obis)
+            field_type = schema.get("type", "string")
 
-            if typ == "float":
-                parsed = float(val_str) if val_str else 0.0
-            elif typ == "int":
-                parsed = int(val_str) if val_str else 0
-            elif typ == "datetime":
+            if field_type == "float":
+                field_value = float(val_str) if val_str else 0.0
+            elif field_type == "int":
+                field_value = int(val_str) if val_str else 0
+            elif field_type == "datetime":
                 clean = val_str.rstrip("W")
                 dt = datetime.strptime(clean, "%y%m%d%H%M%S")
                 dt = dt.replace(tzinfo=timezone(timedelta(hours=1)))  # CET
-                parsed = dt.isoformat()
+                field_value = dt.isoformat()
             else:
-                parsed = val_str
+                field_value = val_str
 
-            values[field] = parsed
-            _LOGGER.debug("    • %s = %s (type=%s)", field, parsed, typ)
+            values[obis] = field_value
+            _LOGGER.debug("    • %s : %s = %s (type=%s)", obis, field_desc, field_value, field_type)
 
             if obis == "0-0:96.1.0":
                 meter_id = val_str
@@ -198,7 +198,7 @@ class DSMRCoordinator(DataUpdateCoordinator):
         if changed_keys:
             self._data.update(values)
             if meter_id:
-                self._data["meter_id"] = meter_id
+                self._data["0-0:96.1.0"] = meter_id
             self._available = True
             _LOGGER.info(
                 "Telegram parsed – %d values, %d changed → %s",
@@ -208,7 +208,7 @@ class DSMRCoordinator(DataUpdateCoordinator):
                 )
 
             # Store for daily cost / peak power
-            import_total = values.get("active_energy_import_(total)")
+            import_total = values.get("1-0:1.8.0") # active_energy_import_(total)
             if import_total is not None:
                 today = datetime.now().date()
                 last_date = self._data.get("_last_date")
@@ -218,7 +218,7 @@ class DSMRCoordinator(DataUpdateCoordinator):
                     self._data["_peak_today"] = 0.0
 
                 # Update peak
-                current_power = values.get("instantaneous_active_power_import", 0)
+                current_power = values.get("1-0:1.7.0", 0) # instantaneous_active_power_import
                 self._data["_peak_today"] = max(self._data.get("_peak_today", 0), current_power)
 
             self.async_set_updated_data(self._data)

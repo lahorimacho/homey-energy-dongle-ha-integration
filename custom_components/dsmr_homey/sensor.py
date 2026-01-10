@@ -111,7 +111,7 @@ class DSMRSensor(SensorEntity):
         schema = coordinator._schema.get(obis_key, {})
         desc = schema.get("description", obis_key)
         self._attr_name = f"DSMR {desc}"
-        self._attr_unique_id = f"dsmr_homey_{obis_key}"
+        self._attr_unique_id = f"dsmr_homey_{desc.lower().replace(" ", "_")}"
         self._attr_native_unit_of_measurement = schema.get("unit")
         self._attr_device_class = schema.get("device_class")
         self._attr_state_class = schema.get("state_class")
@@ -127,8 +127,8 @@ class DSMRSensor(SensorEntity):
 
         _LOGGER.info(
             "SENSOR CREATED → %s | uid=%s | class=%s | icon=%s",
-            self._attr_name, self._attr_unique_id,
-            self._attr_device_class, self._attr_icon,
+            self._attr_name, self._attr_unique_id, self._attr_device_class, self._attr_state_class,
+            self._attr_native_unit_of_measurement, self._attr_icon,
         )
 
     @property
@@ -255,7 +255,7 @@ async def async_setup_entry(
     # ---- 3. Calculated analytics ------------------------------------------------
     calc_entities = []
 
-    # Net active power
+    # Net active power (instantaneous_active_power_import - instantaneous_active_power_export)
     calc_entities.append(
         CalculatedSensor(
             hass,
@@ -265,12 +265,11 @@ async def async_setup_entry(
             "kW",
             SensorDeviceClass.POWER,
             SensorStateClass.MEASUREMENT,
-            lambda: _f("instantaneous_active_power_import")
-                    - _f("instantaneous_active_power_export"),
+            lambda: _f("1-0:1.7.0") - _f("1-0:2.7.0"),
         )
     )
 
-    # Total reactive power (P+ + P-)
+    # Total reactive power (P+ + P-), i.e. positive_reactive_instantaneous_power + negative_reactive_instantaneous_power
     calc_entities.append(
         CalculatedSensor(
             hass,
@@ -280,12 +279,11 @@ async def async_setup_entry(
             "kVAr",
             None,
             SensorStateClass.MEASUREMENT,
-            lambda: _f("positive_reactive_instantaneous_power")
-                    + _f("negative_reactive_instantaneous_power"),
+            lambda: _f("1-0:3.7.0") + _f("1-0:4.7.0"),
         )
     )
 
-    # Net reactive power (P+ - P-)
+    # Net reactive power (P+ - P-), i.e. positive_reactive_instantaneous_power - negative_reactive_instantaneous_power
     calc_entities.append(
         CalculatedSensor(
             hass,
@@ -295,16 +293,15 @@ async def async_setup_entry(
             "kVAr",
             None,
             SensorStateClass.MEASUREMENT,
-            lambda: _f("positive_reactive_instantaneous_power")
-                    - _f("negative_reactive_instantaneous_power"),
+            lambda: _f("1-0:3.7.0") - _f("1-0:4.7.0"),
         )
     )
 
     # Phase balance deviation
     def phase_balance():
-        p1 = _f("l1_active_power_import")
-        p2 = _f("l2_active_power_import")
-        p3 = _f("l3_active_power_import")
+        p1 = _f("1-0:21.7.0") # l1_active_power_import
+        p2 = _f("1-0:41.7.0") # l2_active_power_import
+        p3 = _f("1-0:61.7.0") # l3_active_power_import
         if p1 == p2 == p3 == 0:
             return 0.0
         avg = (p1 + p2 + p3) / 3
@@ -325,8 +322,8 @@ async def async_setup_entry(
 
     # Power factor (cos φ) – approximation
     def power_factor():
-        active = _f("instantaneous_active_power_import")
-        reactive = abs(_f("positive_reactive_instantaneous_power"))
+        active = _f("1-0:1.7.0") # instantaneous_active_power_import
+        reactive = abs(_f("1-0:3.7.0")) # positive_reactive_instantaneous_power
         apparent = (active**2 + reactive**2) ** 0.5
         return round(active / apparent, 3) if apparent > 0 else 1.0
 
@@ -348,7 +345,8 @@ async def async_setup_entry(
     COST_PER_KWH = 1.5  # Change in your config if needed
 
     def daily_cost():
-        import_today = _f("active_energy_import_(total)") - coordinator.get_data().get("_import_yesterday", 0)
+        # 1-0:1.8.0 --> active_energy_import_(total)
+        import_today = _f("1-0:1.8.0") - coordinator.get_data().get("_import_yesterday", 0)
         return round(import_today * COST_PER_KWH, 2)
 
     # Store yesterday's import at midnight (via automation or use recorder)
@@ -368,7 +366,7 @@ async def async_setup_entry(
 
     # Peak power today (resets at midnight)
     def peak_power():
-        current = _f("instantaneous_active_power_import")
+        current = _f("1-0:1.7.0") # instantaneous_active_power_import
         stored = coordinator.get_data().get("_peak_today", 0)
         return max(current, stored)
 
