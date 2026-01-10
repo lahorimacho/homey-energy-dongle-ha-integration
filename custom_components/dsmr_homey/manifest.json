@@ -1,7 +1,7 @@
 {
   "domain": "dsmr_homey",
   "name": "DSMR Homey",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "documentation": "https://github.com/lahorimacho/homey-energy-dongle-ha-integration",
   "requirements": ["aiohttp>=3.8"],
   "codeowners": ["@lahorimacho"],
